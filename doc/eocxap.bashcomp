@@ -1,0 +1,25 @@
+_eocxap() {
+	local cur prev opts
+		COMPREPLY=()
+		cur="${COMP_WORDS[COMP_CWORD]}"
+		prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+		OPTS="--en
+			--enteksta
+			--eo
+			--help
+			--helpi
+			--hsistemo
+			--hsystem
+			--inline
+			--silent
+			--silenta
+			--versio
+			--version
+
+		if [[ ${cur} == -* ]] ; then
+			COMPREPLY=( $(compgen -W "${OPTS}" -- ${cur}) )
+				return 0
+				fi
+}
+complete -F _eocxap eocxap
