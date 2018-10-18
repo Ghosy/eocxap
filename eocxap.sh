@@ -20,6 +20,7 @@ set -euo pipefail
 h_system=false
 inline=false
 silent=false
+stime=1
 # Get default system languae as default locale setting
 locale=$(locale | grep "LANG" | cut -d= -f2 | cut -d_ -f1)
 
@@ -38,6 +39,8 @@ print_usage() {
 	echo "      --enteksta        redakti markan tekston en sama loko"
 	echo "      --silent          supress all messages"
 	echo "      --silenta         kaŝi ĉiujn mesaĝojn"
+	echo "  -s, --sleep=TIME      set the sleep timer when using inlne"
+	echo "      --halteto=TIME    ŝanĝi la daŭro de halteto por enteksta reĝimo"
 	echo "      --version         show the version information for eocxap"
 	echo "      --versio          elmontri la versia informacio de eocxap"
 	echo ""
@@ -86,8 +89,8 @@ main() {
 	check_depends
 
 	# Getopt
-	local short=hi
-	local long=en,eo,hsystem,hsistemo,inline,enteksta,silent,silenta,help,helpi,version,versio
+	local short=his:
+	local long=en,eo,hsystem,hsistemo,inline,enteksta,silent,silenta,sleep:,halteto:,help,helpi,version,versio
 
 	parsed=$(getopt --options $short --longoptions $long --name "$0" -- "$@")
 	if [[ $? != 0 ]]; then
@@ -122,6 +125,10 @@ main() {
 			--silent|--silenta)
 				silent=true
 				;;
+			-s|--sleep|--halteto)
+				stime="$2"
+				shift
+				;;
 			--version|--versio)
 				print_version
 				;;
@@ -131,7 +138,7 @@ main() {
 				;;
 			*)
 				# Unknown option
-				print_err "$2 argument not properly handled." "$2 argumento ne prave uzis."
+				print_err "$1 argument not properly handled." "$1 argumento ne prave uzis."
 				exit 64
 				;;
 		esac
@@ -142,7 +149,7 @@ main() {
 	if ($inline); then
 		old_clip=$(xsel -bo)
 		# Sleep one second to allow for the release of any held keys
-		sleep 1
+		sleep "$stime"
 		xdotool key --clearmodifiers ctrl+c
 	fi
 
