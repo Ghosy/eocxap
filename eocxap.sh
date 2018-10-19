@@ -127,6 +127,11 @@ main() {
 				;;
 			-s|--sleep|--halteto)
 				stime="$2"
+				# Check if stime is a number
+				if [[ ! $stime =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+					print_err "$stime is not a number" "$stime ne estas numero"
+					exit 1
+				fi
 				shift
 				;;
 			--version|--versio)
