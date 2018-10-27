@@ -17,6 +17,7 @@
 
 set -euo pipefail
 
+alt=false
 h_system=false
 inline=false
 silent=false
@@ -27,6 +28,8 @@ locale=$(locale | grep "LANG" | cut -d= -f2 | cut -d_ -f1)
 print_usage() {
 	echo "Usage: eocxap [OPTION]..."
 	echo "Options(Agordoj):"
+	echo "  -a, --alt             use alternate copy/paste(Ctrl/Shift+Insert)"
+	echo "      --alia            uzu alia kopii/alglui metodo(Ctrl/Shift+Insert)"
 	echo "      --en              display all messages in English"
 	echo "                        prezenti ĉiujn mesaĝojn angle"
 	echo "      --eo              display all messages in Esperanto"
@@ -89,8 +92,8 @@ main() {
 	check_depends
 
 	# Getopt
-	local short=his:
-	local long=en,eo,hsystem,hsistemo,inline,enteksta,silent,silenta,sleep:,halteto:,help,helpi,version,versio
+	local short=ahis:
+	local long=alt,alia,en,eo,hsystem,hsistemo,inline,enteksta,silent,silenta,sleep:,halteto:,help,helpi,version,versio
 
 	parsed=$(getopt --options $short --longoptions $long --name "$0" -- "$@")
 	if [[ $? != 0 ]]; then
@@ -103,6 +106,9 @@ main() {
 	# Deal with command-line arguments
 	while true; do
 		case $1 in
+			-a|--alt|--alia)
+				alt=true
+				;;
 			--en)
 				locale="en"
 				;;
@@ -155,7 +161,11 @@ main() {
 		old_clip=$(xsel -bo)
 		# Sleep one second to allow for the release of any held keys
 		sleep "$stime"
-		xdotool key --clearmodifiers ctrl+c
+		if ! ($alt); then
+			xdotool key --clearmodifiers Ctrl+c
+		else
+			xdotool key --clearmodifiers Ctrl+Insert
+		fi
 	fi
 
 	# Get current selection from Ctrl+C clipboard
@@ -177,7 +187,11 @@ main() {
 
 	# If inline paste text
 	if ($inline); then
-		xdotool key --clearmodifiers ctrl+v
+		if ! ($alt); then
+			xdotool key --clearmodifiers Ctrl+v
+		else
+			xdotool key --clearmodifiers Shift+Insert
+		fi
 		xsel -bi <<< "$old_clip"
 	fi
 }
