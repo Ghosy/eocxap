@@ -46,6 +46,8 @@ print_usage() {
 	echo "      --halteto=TIME    ŝanĝi la daŭro de halteto por enteksta reĝimo"
 	echo "      --version         show the version information for eocxap"
 	echo "      --versio          elmontri la versia informacio de eocxap"
+	echo "  -w                    use w instead of ux when using the X-system"
+	echo "                        uzi w anstataŭ ux kiam uzanta per X-sistemo"
 	echo ""
 	echo "Exit Status(Elira Kodo):"
 	echo "  0  if OK"
@@ -92,7 +94,7 @@ main() {
 	check_depends
 
 	# Getopt
-	local short=ahis:
+	local short=ahis:w
 	local long=alt,alia,en,eo,hsystem,hsistemo,inline,enteksta,silent,silenta,sleep:,halteto:,help,helpi,version,versio
 
 	parsed=$(getopt --options $short --longoptions $long --name "$0" -- "$@")
@@ -143,6 +145,9 @@ main() {
 			--version|--versio)
 				print_version
 				;;
+			-w)
+				sub_w=true
+				;;
 			--)
 				shift
 				break
@@ -162,7 +167,7 @@ main() {
 		# Sleep one second to allow for the release of any held keys
 		sleep "$stime"
 		if ! ($alt); then
-			xdotool key --clearmodifiers Ctrl+c
+			xdotool key --clearmodifiers ctrl+c
 		else
 			xdotool key --clearmodifiers Ctrl+Insert
 		fi
@@ -172,8 +177,13 @@ main() {
 	clip=$(xsel -bo)
 
 	if ! ($h_system); then
+		if ($sub_w); then
+			u_sub='s/w/\xc5\xad/g; s/W/\xc5\xac/g;'
+		else
+			u_sub=' s/u\(x\|X\)/\xc5\xad/g; s/U\(x\|X\)/\xc5\xac/g;'
+		fi
 		# Replace all matching characters(X-system)
-		edit=$(sed -e 's/c\(x\|X\)/\xc4\x89/g; s/g\(x\|X\)/\xc4\x9d/g; s/j\(x\|X\)/\xc4\xb5/g; s/h\(x\|X\)/\xc4\xa5/g; s/u\(x\|X\)/\xc5\xad/g; s/s\(x\|X\)/\xc5\x9d/g; s/H\(x\|X\)/\xc4\xa4/g; s/C\(x\|X\)/\xc4\x88/g; s/g\(x\|X\)/\xc4\x9c/g; s/J\(x\|X\)/\xc4\xb4/g; s/S\(x\|X\)/\xc5\x9c/g; s/U\(x\|X\)/\xc5\xac/g;' <<< "$clip")
+		edit=$(sed -e "s/c\\(x\\|X\\)/\\xc4\\x89/g; s/g\\(x\\|X\\)/\\xc4\\x9d/g; s/j\\(x\\|X\\)/\\xc4\\xb5/g; s/h\\(x\\|X\\)/\\xc4\\xa5/g; s/s\\(x\\|X\\)/\\xc5\\x9d/g; s/H\\(x\\|X\\)/\\xc4\\xa4/g; s/C\\(x\\|X\\)/\\xc4\\x88/g; s/g\\(x\\|X\\)/\\xc4\\x9c/g; s/J\\(x\\|X\\)/\\xc4\\xb4/g; s/S\\(x\\|X\\)/\\xc5\\x9c/g; $u_sub" <<< "$clip")
 	else
 		# Replace all matching characters(H-system)
 		edit=$(sed -e 's/c\(h\|H\)/\xc4\x89/g; s/g\(h\|H\)/\xc4\x9d/g; s/j\(h\|H\)/\xc4\xb5/g; s/h\(h\|H\)/\xc4\xa5/g; s/s\(h\|H\)/\xc5\x9d/g; s/H\(x\|H\)/\xc4\xa4/g; s/C\(h\|H\)/\xc4\x88/g; s/g\(h\|H\)/\xc4\x9c/g; s/J\(h\|H\)/\xc4\xb4/g; s/S\(h\|H\)/\xc5\x9c/g;' <<< "$clip")
@@ -188,7 +198,7 @@ main() {
 	# If inline paste text
 	if ($inline); then
 		if ! ($alt); then
-			xdotool key --clearmodifiers Ctrl+v
+			xdotool key --clearmodifiers ctrl+v
 		else
 			xdotool key --clearmodifiers Shift+Insert
 		fi
