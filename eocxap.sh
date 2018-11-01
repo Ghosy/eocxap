@@ -161,6 +161,10 @@ main() {
 		shift
 	done
 
+	if ! ($inline) && ($alt); then
+		print_err "--alt needs --inline to function" "--alia devas --enteksta por funkcii"
+	fi
+
 	# If inline edit, copy text
 	if ($inline); then
 		old_clip=$(xsel -bo)
