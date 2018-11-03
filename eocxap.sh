@@ -195,7 +195,6 @@ main() {
 
 	# Only change clipboard if edits were made
 	if [ ! -z "$edit" ]; then
-		echo "$edit"
 		xsel -bi <<< "$edit"
 	fi
 
