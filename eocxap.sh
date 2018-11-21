@@ -171,7 +171,7 @@ main() {
 		# Sleep one second to allow for the release of any held keys
 		sleep "$stime"
 		if ! ($alt); then
-			xdotool key --clearmodifiers ctrl+c
+			xdotool key --clearmodifiers Ctrl+C
 		else
 			xdotool key --clearmodifiers Ctrl+Insert
 		fi
@@ -201,7 +201,7 @@ main() {
 	# If inline paste text
 	if ($inline); then
 		if ! ($alt); then
-			xdotool key --clearmodifiers ctrl+v
+			xdotool key --clearmodifiers Ctrl+V
 		else
 			xdotool key --clearmodifiers Shift+Insert
 		fi
