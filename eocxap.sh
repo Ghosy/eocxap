@@ -98,6 +98,7 @@ main() {
 	local long=alt,alia,en,eo,hsystem,hsistemo,inline,enteksta,silent,silenta,sleep:,halteto:,help,helpi,version,versio
 
 	parsed=$(getopt --options $short --longoptions $long --name "$0" -- "$@")
+	# shellcheck disable=SC2181
 	if [[ $? != 0 ]]; then
 		# Getopt not getting arguments correctly
 		exit 2
@@ -194,7 +195,7 @@ main() {
 	fi
 
 	# Only change clipboard if edits were made
-	if [ ! -z "$edit" ]; then
+	if [ -n "$edit" ]; then
 		xsel -bi <<< "$edit"
 	fi
 
