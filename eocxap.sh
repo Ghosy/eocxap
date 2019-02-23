@@ -83,9 +83,12 @@ print_err() {
 }
 
 check_depends() {
-	# Check for xsel
-	if ! type xsel >> /dev/null; then
-		print_err "Xsel is not installed. Please install xsel." "Xsel ne estas instalita. Bonvolu instali xsel."
+	check_depend "xsel"
+}
+
+check_depend() {
+	if ! type "$1" &> /dev/null; then
+		print_err "${1^} is not installed. Please install $1." "${1^} ne estas instalita. Bonvolu instali $1."
 		exit 1
 	fi
 }
